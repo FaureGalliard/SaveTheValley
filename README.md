@@ -7,7 +7,7 @@ cmake --build --preset debug
 ### release
 cmake --preset release
 cmake --build --preset release
-
+## ----------------
 ### Linux:
  Asegurate de tener descargado sfml 3.0.0 y ejecuta comandos de arriba
 ### Windows:
