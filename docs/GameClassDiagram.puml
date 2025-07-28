@@ -1,0 +1,354 @@
+@startuml nose
+' Estilo y configuración para un diagrama UML claro y profesional
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam packageStyle rectangle
+
+' Componente base para entidades
+abstract class Component {
+  + void Update(float deltaTime)
+  + void Initialize(GameObject^ owner)
+}
+
+' Clase base para entidades del juego
+abstract class GameObject {
+  -position: Vector2^
+  -sprite: Sprite^
+  -hitboxPosition: Vector2^
+  -hitboxSize: Vector2^
+  -hitboxOffset: Vector2^
+  -blocksMovement: bool
+  +GameObject(Vector2^, Sprite^, Vector2^, Vector2^, bool)
+  +Position: Vector2^ {get, set}
+  +SpriteRef: Sprite^ {get, set}
+  +HitboxOffset: Vector2^ {get, set}
+  +HitboxSize: Vector2^ {get, set}
+  +BlocksMovement: bool {get, set}
+  +getHitbox(): Rectangle
+  +Draw(Graphics^)
+  +DrawHitbox(Graphics^)
+}
+
+
+class MapObjectDefinition {
+  +sprite: Sprite^
+  +hitboxReduction: Vector2^
+  +hitboxOffset: Vector2^
+  +blocksMovement: bool
+  +MapObjectDefinition(Sprite^, Vector2^, Vector2^, bool)
+}
+
+' Componente de Sprite y Animación
+class Sprite {
+  -spriteSheet: Bitmap^
+  -frameSize: Vector2^
+  -currentFrameIndex: Vector2^
+  -totalFrameCount: Vector2^
+  +Sprite(Bitmap^, Vector2^)
+  +Sprite(Bitmap^)
+  +SpriteSheet: Bitmap^ {get, set}
+  +FrameSize: Vector2^ {get, set}
+  +CurrentFrameIndex: Vector2^ {get, set}
+  +TotalFrameCount: Vector2^ {get, set}
+  +Update()
+
+}
+
+
+' Clase para animaciones
+
+' Componente de entrada
+class InputComponent {
+  - Dictionary<Keys, IAction^>^ keyBindings
+  - HashSet<Keys>^ pressedKeys
+  + void HandleKeyDown(Keys key)
+  + void HandleKeyUp(Keys key)
+  + void Update(float deltaTime) override
+  + void Initialize(GameObject^ owner) override
+}
+
+' Componente de movimiento
+class MovementComponent {
+  - float moveSpeed
+  - int direction
+  + void Move(Vector2 direction, Map^ map)
+  + void Update(float deltaTime) override
+  + int GetDirection()
+}
+
+' Componente de colisión
+class CollisionComponent {
+  - bool hasCollision
+  - Rectangle^ currentHitbox
+  + bool CheckCollision(Rectangle^ hitbox, Map^ map)
+  + void SetHitbox(Rectangle^ hitbox)
+  + Rectangle^ GetHitbox()
+  + void Update(float deltaTime) override
+}
+
+' Interfaz para estados de animación
+interface IAnimationState {
+  + void Update(Hero^ hero, SpriteComponent^ sprite)
+  + void Enter(Hero^ hero, SpriteComponent^ sprite)
+  + void Exit(Hero^ hero, SpriteComponent^ sprite)
+}
+
+' Estados de animación del héroe
+class IdleAnimationState {
+  + void Update(Hero^ hero, SpriteComponent^ sprite) override
+  + void Enter(Hero^ hero, SpriteComponent^ sprite) override
+  + void Exit(Hero^ hero, SpriteComponent^ sprite) override
+}
+
+class WalkAnimationState {
+  + void Update(Hero^ hero, SpriteComponent^ sprite) override
+  + void Enter(Hero^ hero, SpriteComponent^ sprite) override
+  + void Exit(Hero^ hero, SpriteComponent^ sprite) override
+}
+
+class ActionAnimationState {
+  - IAction^ action
+  + void Update(Hero^ hero, SpriteComponent^ sprite) override
+  + void Enter(Hero^ hero, SpriteComponent^ sprite) override
+  + void Exit(Hero^ hero, SpriteComponent^ sprite) override
+}
+
+' Clase para el héroe
+class Hero {
+  - int health
+  - int lives
+  - Inventory^ inventory
+  - IAnimationState^ animationState
+  - IAction^ currentAction
+  + void Move(Vector2 direction)
+  + void ExecuteAction(IAction^ action, GameObject^ target)
+  + void Interact(MapObject^ object)
+  + void TakeDamage(int amount)
+  + void SetAnimationState(IAnimationState^ state)
+}
+
+' Clase para enemigos
+class Enemy {
+  - int health
+  - float fireChance
+  + void TakeDamage(int amount)
+  + void GenerateFire(Map^ map)
+}
+
+' Clase para objetos del mapa
+class MapObject {
+  +MapObject()
+  +MapObject(Vector2^, Sprite^, Vector2^, Vector2^, bool)
+}
+
+' Clases específicas de objetos del mapa
+class Crop {
+  -def: MapObjectDefinition^ {static, initonly}
+  +Crop(Vector2^)
+}
+
+class LongTree {
+  -def: MapObjectDefinition^ {static, initonly}
+  +LongTree(Vector2^)
+}
+
+class Rocks {
+  -def: MapObjectDefinition^ {static, initonly}
+  +Rocks(Vector2^)
+}
+
+class SwordsBarrel {
+  -def: MapObjectDefinition^ {static, initonly}
+  +SwordsBarrel(Vector2^)
+}
+
+class WaterBucket {
+  -def: MapObjectDefinition^ {static, initonly}
+  +WaterBucket(Vector2^)
+}
+
+' Clase para el mapa
+class Map {
+  - List<MapObject^> objects
+  - List<Fire^> fires
+  + void AddObject(MapObject^ object)
+  + void AddFire(Fire^ fire)
+  + List<MapObject^> GetCollidableObjects()
+  + bool CheckCollision(Rectangle^ hitbox)
+  + void Update(float deltaTime)
+}
+
+' Clase para el fuego
+class Fire {
+  - float duration
+  + void Update(float deltaTime)
+  + void Burn(Tree^ tree)
+}
+
+' Clase para el inventario
+class Inventory {
+  - List<IItem^> items
+  + void AddItem(IItem^ item)
+  + void RemoveItem(IItem^ item)
+  + List<IItem^> GetItems()
+}
+
+' Interfaz para ítems
+interface IItem {
+  + void Use(Hero^ hero)
+}
+
+' Clases para ítems específicos
+class Seed {
+  - SeedType type
+  + void Use(Hero^ hero) override
+}
+
+class Water {
+  + void Use(Hero^ hero) override
+}
+
+' Interfaz para acciones del héroe
+interface IAction {
+  + void Execute(Hero^ hero, GameObject^ object)
+  + Animation^ GetAnimation()
+  + Rectangle^ GetHitbox(Vector2 position)
+}
+
+' Clases para acciones específicas
+class WalkAction {
+  + void Execute(Hero^ hero, GameObject^ object) override
+  + Animation^ GetAnimation() override
+  + Rectangle^ GetHitbox(Vector2 position) override
+}
+
+
+class HammerAction {
+  + void Execute(Hero^ hero, GameObject^ object) override
+  + Animation^ GetAnimation() override
+  + Rectangle^ GetHitbox(Vector2 position) override
+}
+
+
+class WaterAction {
+  + void Execute(Hero^ hero, GameObject^ object) override
+  + Animation^ GetAnimation() override
+  + Rectangle^ GetHitbox(Vector2 position) override
+}
+
+class PlantAction {
+  + void Execute(Hero^ hero, GameObject^ object) override
+  + Animation^ GetAnimation() override
+  + Rectangle^ GetHitbox(Vector2 position) override
+}
+
+
+class InteractAction {
+  + void Execute(Hero^ hero, GameObject^ object) override
+  + Animation^ GetAnimation() override
+  + Rectangle^ GetHitbox(Vector2 position) override
+}
+
+
+' Clase Singleton para el gestor del juego
+class GameManager {
+  - static GameManager^ instance
+  - Hero^ hero
+  - List<Enemy^> enemies
+  - Map^ map
+  - GameState state
+  + static GameManager^ GetInstance()
+  + void Update(float deltaTime)
+  + void Render(Graphics^ g)
+  + void CheckWinCondition()
+  + void ResetGame()
+  + void PauseGame()
+  + void SetState(GameState newState)
+  + void HandleKeyDown(Keys key)
+  + void HandleKeyUp(Keys key)
+}
+
+class EnemyFactory {
+  + Enemy^ CreateEnemy(Vector2 position, Bitmap^ spriteSheet)
+}
+
+interface IGameObserver {
+  + void OnNotify(GameEvent event, GameObject^ source)
+}
+
+class FireObserver {
+  + void OnNotify(GameEvent event, GameObject^ source) override
+}
+
+enum SeedType {
+  Wheat
+  Corn
+  Apple
+}
+
+enum GameEvent {
+  EnemyKilled
+  FireStarted
+  CropGrown
+  TreeBurned
+  WaterCollected
+  SeedPlanted
+}
+
+enum mapObjectType {
+  Well
+  LongTree
+  Crop
+  WaterBucket
+  Rocks
+  SwordsBarrel
+}
+
+enum GameState {
+  Playing
+  Paused
+  GameOver
+  Victory
+}
+
+IdleAnimationState .|> IAnimationState
+CollisionComponent -|> Component
+MovementComponent -|> Component
+InputComponent -|> Component
+GameObject "1" *--> "0..*" Component
+GameObject <|-- MapObject
+MapObject <|-- Crop
+MapObject <|-- LongTree
+MapObject <|-- Rocks
+MapObject <|-- SwordsBarrel
+MapObject <|-- WaterBucket
+MapObjectDefinition ||--o Crop
+MapObjectDefinition ||--o LongTree
+MapObjectDefinition ||--o Rocks
+MapObjectDefinition ||--o SwordsBarrel
+MapObjectDefinition ||--o WaterBucket
+FireObserver .|> IGameObserver
+GameManager "1" *--> "1" Hero
+GameManager "1" *--> "0..*" Enemy
+GameManager "1" *--> "1" Map
+WalkAnimationState .|> IAnimationState
+ActionAnimationState .|> IAnimationState
+Hero -|> GameObject
+Hero "1" *--> "1" Inventory
+Hero "1" --> "1" IAnimationState
+Hero "1" --> "0..1" IAction
+Enemy -|> GameObject
+MapObject -|> GameObject
+MapObject "0..*" --* "1" Map
+Fire "0..*" --* "1" Map
+Fire -|> GameObject
+Seed .|> IItem
+Water .|> IItem
+WaterAction .|> IAction
+PlantAction .|> IAction
+InteractAction .|> IAction
+HammerAction .|> IAction
+WalkAction .|> IAction
+
+@enduml

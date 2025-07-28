@@ -1,0 +1,94 @@
+@startuml ScreensDiagramClass
+
+' Clase base abstracta
+abstract class Screen {
+  +handleInput(window: sf::RenderWindow&)
+  +update(deltaTime: float)
+  +render(window: sf::RenderWindow&)
+}
+
+' Clase principal del juego
+class Game {
+  -window: sf::RenderWindow
+  -currentScreen: std::unique_ptr<Screen>
+  +Game()
+  +setScreen(newScreen: std::unique_ptr<Screen>)
+  +run()
+}
+
+' Pantalla de inicio
+class StartScreen {
+  -game: Game*
+  -font: sf::Font
+  -btnPlay: sf::RectangleShape
+  -btnShowScores: sf::RectangleShape
+  -btnExit: sf::RectangleShape
+  -btnSettings: sf::RectangleShape
+  -btnPlayText: sf::Text
+  -btnShowScoresText: sf::Text
+  -btnExitText: sf::Text
+  -btnSettingsText: sf::Text
+  -lblVersion: sf::Text
+  -lblAuthor: sf::Text
+  -clientWidth: float
+  -clientHeight: float
+  +StartScreen(game: Game*)
+  +handleInput(window: sf::RenderWindow&)
+  +update(deltaTime: float)
+  +render(window: sf::RenderWindow&)
+}
+
+' Pantalla del juego
+class GameScreen {
+  -backgroundTexture: sf::Texture
+  -background: sf::Sprite
+  -gameManager: std::unique_ptr<GameManager>
+  -keyStates: std::vector<bool>
+  +GameScreen()
+  +handleInput(window: sf::RenderWindow&)
+  +update(deltaTime: float)
+  +render(window: sf::RenderWindow&)
+}
+
+' Pantalla de puntajes
+class ScoresScreen {
+  -game: Game*
+  -font: sf::Font
+  -btnReturn: sf::RectangleShape
+  -btnReturnText: sf::Text
+  +ScoresScreen(game: Game*)
+  +handleInput(window: sf::RenderWindow&)
+  +update(deltaTime: float)
+  +render(window: sf::RenderWindow&)
+}
+
+' Pantalla de créditos
+class CreditsScreen {
+  -font: sf::Font
+  -label: sf::Text
+  +CreditsScreen()
+  +handleInput(window: sf::RenderWindow&)
+  +update(deltaTime: float)
+  +render(window: sf::RenderWindow&)
+}
+
+' Clase supuesta para GameManager
+class GameManager {
+  ' Atributos supuestos
+  -sprites: std::vector<sf::Sprite>
+  +GameManager()
+  +update(deltaTime: float, keyStates: std::vector<bool>)
+  +draw(window: sf::RenderWindow&)
+}
+
+' Relaciones
+Game o--> "1" Screen : currentScreen
+StartScreen --|> Screen
+GameScreen --|> Screen
+ScoresScreen --|> Screen
+CreditsScreen --|> Screen
+GameScreen o--> "1" GameManager
+StartScreen --> Game : navigates
+ScoresScreen --> Game : navigates
+
+@enduml
