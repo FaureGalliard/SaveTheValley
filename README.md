@@ -1,7 +1,7 @@
 # Instrucciones
 sfml 2.6.2 
 
-## Compilar
+## Compila y ejecuta con:
 cmake --preset default
 cmake --build --preset default
 
@@ -10,6 +10,7 @@ cmake --build --preset default
  https://www.sfml-dev.org/download/sfml/2.6.2/
  y ejecuta comandos de arriba
 ### Windows:
- Debes tener este compilador para usar los binarios ya compilados de sfml: 
+ Recuerda que para usar los dll precompilados de sfml 2.6.2 se usa este compilador
  https://www.sfml-dev.org/files/SFML-2.6.2-windows-gcc-13.1.0-mingw-64-bit.zip
- Compila con los comandos de arriba y despues copia los .dll de lib/SFML/bin con esta forma sfml-xx-2.dll
+ Una vez instalado, cambia la direccion del compilador en el cmakepresets,
+ Compila y ejecuta con los comandos de arriba 
