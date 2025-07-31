@@ -4,7 +4,7 @@ sfml 2.6.2
 ## Compila y ejecuta con:
 cmake --preset default
 cmake --build --preset default
-
+chcp 65001
 ### Linux:
  Asegurate de tener descargado sfml 2.6.2
  https://www.sfml-dev.org/download/sfml/2.6.2/
