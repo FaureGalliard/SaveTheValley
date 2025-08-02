@@ -4,8 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/Users/angel/OneDrive/Escritorio/SaveValley/lib/SFML/include",
-                "C:/Users/angel/OneDrive/Escritorio/SaveValley/include"
+                "C:\\Users\\angel\\OneDrive\\Escritorio\\nose\\SFML-2D-Game\\lib\\SFML\\include",
+                "C:\\Users\\angel\\OneDrive\\Escritorio\\nose\\SFML-2D-Game\\include"
             ],
             "defines": [],
             "compilerPath": "C:/mingw64/bin/g++.exe",

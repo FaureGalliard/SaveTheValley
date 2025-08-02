@@ -1,0 +1,48 @@
+@startuml diagrama
+
+class GameObject {
+    
+}
+
+class IGameObserver{}
+class IAction{}
+class seed{}
+
+class Fire{
+
+}
+class GameManager {
+    
+}
+
+class EnemyFactory {
+    
+}
+
+class mapObjects {
+ 
+}
+
+class Hero{
+
+}
+
+class Inventory {
+    
+}
+
+class Map {
+    
+}
+
+class Enemy{}
+
+enum GameState {
+    START,
+    PLAYING,
+    PAUSED,
+    GAME_OVER
+}
+
+
+@enduml
